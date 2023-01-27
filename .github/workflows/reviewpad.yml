@@ -1,0 +1,10 @@
+name: Reviewpad Action
+
+on: pull_request_target
+
+jobs:
+  reviewpad:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reviewpad
+        uses: reviewpad/action@v3.x
