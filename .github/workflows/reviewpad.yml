@@ -1,10 +1,14 @@
-name: Reviewpad Action
+api-version: reviewpad.com/v3.x
 
-on: pull_request_target
-
-jobs:
-  reviewpad:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Reviewpad
-        uses: reviewpad/action@v3.x
+workflows:
+  - name: label-pull-request-with-size
+    if:
+      - rule: $size() <= 50
+        extra-actions:
+          - $addLabel("small")
+      - rule: $size() > 50 && $size() <= 150
+        extra-actions:
+          - $addLabel("medium")
+      - rule: $size() > 150
+        extra-actions:
+          - $addLabel("large")
