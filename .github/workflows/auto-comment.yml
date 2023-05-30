@@ -1,0 +1,30 @@
+name: Auto Comment
+on: [issues, pull_request]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: wow-actions/auto-comment@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          issuesOpened: |
+            👋 @{{ author }}
+            Thank you for raising an issue. We will investigate into the matter and get back to you as soon as possible.
+            Please make sure you have given us as much context as possible.
+
+          pullRequestOpened: |
+            👋 @{{ author }}
+            Thank you for raising your pull request.
+            Please make sure you have followed our contributing guidelines. We will review it as soon as possible
+
+          issuesClosed: |
+            👋 @{{ author }}
+            Your issue has been resolved. Thank you for your contribution. Let's geek out. 😎
+
+          issuesAssigned: |
+            👋 @{{ assignee }}
+            This issue has been assigned to you. You can now start working on it.
+
+          issuesUnassigned: |
+            👋 @{{ assignee }}
+            You have been unassigned from this issue. If you are offline, feel free to reassign yourself when you are available.
