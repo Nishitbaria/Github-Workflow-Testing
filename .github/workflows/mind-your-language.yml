@@ -1,4 +1,5 @@
 name: Mind your language
+
 on:
   issues:
     types:
@@ -12,6 +13,7 @@ on:
     types:
       - created
       - edited
+
 jobs:
   echo_issue_comment:
     runs-on: ubuntu-latest
@@ -19,6 +21,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Setup Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
       - name: Profanity check step
         uses: tailaiw/mind-your-language-action@v1.0.3
         env:
