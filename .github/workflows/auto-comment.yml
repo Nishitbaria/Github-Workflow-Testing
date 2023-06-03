@@ -2,15 +2,17 @@ name: Auto Comment
 
 on:
   issues:
+    types: [opened, closed]
   pull_request_target:
     types: [closed, opened]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: 🚧 Install
         run: |
           yarn
@@ -29,11 +31,11 @@ jobs:
 
             Please make sure you have given us as much context as possible.
 
-          pullRequestClosed: >
-            👋 @{{ author }} This PR is closed.
+          issuesClosed: >
+            👋 @{{ author }} This issue is closed.
 
           pullRequestMerged: >
-            👋 @{{ author }} This PR is merged.
+            👋 @{{ author }} 🎉 Congrats on your merged pull request! Thanks for the valuable contribution! 👏🎉 Congrats on your merged pull request! Thanks for the valuable contribution! 👏
 
           pullRequestOpened: >
             Hello👋 @{{ author }}, I hope you are doing well!
@@ -41,3 +43,6 @@ jobs:
             Thank you for raising your pull request and contributing to our Community 🎉
 
             Please make sure you have followed our contributing guidelines. We will review it as soon as possible.
+
+          issuesAssigned: >
+            Hello @{{ author }}, thank you for raising an issue. 🙌 I have assigned the issue to you. You can now start working on it. If you encounter any problems, please feel free to connect with us. 👍
