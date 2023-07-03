@@ -1,7 +1,17 @@
-name: 🐛 Bug
+name: "🐛 Bug"
 description: Report an issue to help improve the project.
 labels: ["🛠 goal: fix"]
 body:
+  - type: checkboxes
+    id: issueType
+    attributes:
+      label: Issue Type
+      description: Select the type of issue:
+      options:
+        - Frontend
+        - Backend
+    validations:
+      required: true
   - type: textarea
     id: description
     attributes:
