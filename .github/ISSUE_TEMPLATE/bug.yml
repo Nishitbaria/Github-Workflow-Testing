@@ -17,8 +17,8 @@ body:
     attributes:
       label: Description
       description: A brief description of the question or issue, also include what you tried and what didn't work
-    validations:
-      required: true
+      validations:
+        required: true
   - type: textarea
     id: screenshots
     attributes:
