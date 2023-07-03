@@ -3,7 +3,7 @@ description: Report an issue to help improve the project.
 labels: ["Nishitbaria"]
 
 body:
-  - type: dropdown
+  - type: checkbox
     id: issueType
     attributes:
       label: Issue Type
@@ -38,16 +38,7 @@ body:
     validations:
       required: false
 
-{% if inputs.issueType == "Frontend" %}
-- type: markdown
-  attributes:
-    value: |
-      **Frontend Label**
-{% elif inputs.issueType == "Backend" %}
-- type: markdown
-  attributes:
-    value: |
-      **Backend Label**
+
 {% endif %}
 
 - type: markdown
