@@ -1,6 +1,7 @@
 name: "🐛 Bug"
 description: Report an issue to help improve the project.
 labels: ["🛠 goal: fix"]
+
 body:
   - type: dropdown
     id: issueType
@@ -12,6 +13,7 @@ body:
         - Backend
     validations:
       required: true
+
   - type: textarea
     id: description
     attributes:
@@ -19,6 +21,7 @@ body:
       description: A brief description of the question or issue, also include what you tried and what didn't work
     validations:
       required: true
+
   - type: textarea
     id: screenshots
     attributes:
@@ -26,6 +29,7 @@ body:
       description: Please add screenshots if applicable
     validations:
       required: false
+
   - type: textarea
     id: extrainfo
     attributes:
@@ -33,6 +37,7 @@ body:
       description: Is there anything else we should know about this bug?
     validations:
       required: false
+
   - type: markdown
     attributes:
       value: |
