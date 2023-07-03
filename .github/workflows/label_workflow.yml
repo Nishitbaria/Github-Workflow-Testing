@@ -1,40 +1,22 @@
-name: "Label Workflow"
+name: Add Frontend Label
+
 on:
   issues:
     types:
       - opened
 
 jobs:
-  add-label:
+  add_frontend_label:
     runs-on: ubuntu-latest
     steps:
-      - name: Check for Frontend
-        if: ${{ contains(github.event.issue.body, 'Frontend') }}
-        run: echo "::set-output name=frontend::true"
-  
-      - name: Check for Backend
-        if: ${{ contains(github.event.issue.body, 'Backend') }}
-        run: echo "::set-output name=backend::true"
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Add Labels
-        uses: actions/github-script@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          script: |
-            if (process.env.frontend) {
-              github.issues.addLabels({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                labels: ['frontend']
-              });
-            }
-            if (process.env.backend) {
-              github.issues.addLabels({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                labels: ['backend']
-              });
-            }
+      - name: Add Frontend Label
+        if: ${{ github.event.issue.labels | map(attribute='name') | contains(['Frontend']) }}
+        run: |
+          TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          ISSUE_NUMBER="${{ github.event.issue.number }}"
+          API_URL="https://api.github.com/repos/${{ github.repository }}/issues/${{ ISSUE_NUMBER }}"
+          PAYLOAD='{"labels":["Frontend"]}'
+          curl -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d "$PAYLOAD" $API_URL
