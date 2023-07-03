@@ -6,7 +6,7 @@ body:
     id: issueType
     attributes:
       label: Issue Type
-      description: Select the type of issue:
+      description: "Thank you for reporting a bug!"
       options:
         - Frontend
         - Backend
