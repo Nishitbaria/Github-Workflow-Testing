@@ -1,22 +1,19 @@
-name: Add Frontend Label
+name: Assign Frontend Label
 
 on:
   issues:
-    types:
-      - opened
+    types: [opened]
 
 jobs:
-  add_frontend_label:
+  assignLabel:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Add Frontend Label
-        if: ${{ github.event.issue.labels | map(attribute='name') | contains(['Frontend']) }}
-        run: |
-          TOKEN="${{ secrets.GITHUB_TOKEN }}"
-          ISSUE_NUMBER="${{ github.event.issue.number }}"
-          API_URL="https://api.github.com/repos/${{ github.repository }}/issues/${{ ISSUE_NUMBER }}"
-          PAYLOAD='{"labels":["Frontend"]}'
-          curl -X POST -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d "$PAYLOAD" $API_URL
+      - name: Assign Frontend Label
+        if: ${{ github.event.issue.body.issueType == 'Frontend' }}
+        uses: peter-evans/add-labels@v3
+        with:
+          labels: Frontend
+          issue-number: ${{ github.event.issue.number }}
