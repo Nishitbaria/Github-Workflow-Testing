@@ -1,32 +1,24 @@
+---
 name: "🐛 Bug"
 about: Report an issue to help improve the project.
 
-on:
-  issues:
-    types:
-      - opened
+---
+<!-- Provide a brief summary of the issue in the title above -->
+## Issue Type
+<!-- Select the appropriate issue type -->
+- [ ] Frontend
+- [ ] Backend
 
-jobs:
-  createIssue:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up Git repository
-        uses: actions/checkout@v2
+## Description
+<!-- Provide a detailed description of the issue -->
+<!-- Include what you tried and what didn't work -->
 
-      - name: Create Issue
-        uses: peter-evans/create-issue-from-file@v3
-        with:
-          title: ${{ github.event.issue.title }}
-          body: |
-            **Issue Type**: ${{ github.event.issue.body }}
-            
-            **Description**:
-            ${{ github.event.issue.body }}
-            
-            **Screenshots**:
-            ${{ github.event.issue.body }}
-            
-            **Additional Information**:
-            ${{ github.event.issue.body }}
+## Screenshots
+<!-- Add screenshots if applicable -->
 
-          labels: "Nishitbaria"
+## Additional Information
+<!-- Add any additional information that might be helpful -->
+
+<!-- Feel free to add any relevant labels or assignees -->
+<!-- You can also join our Discord community [here](http://discord.eddiehub.org) -->
+<!-- Feel free to check out other cool repositories of the EddieHub Community [here](https://github.com/EddieHubCommunity) -->
