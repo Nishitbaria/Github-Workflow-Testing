@@ -39,15 +39,15 @@ body:
       required: false
 
 {% if inputs.issueType == "Frontend" %}
-  - type: markdown
-    attributes:
-      value: |
-        **Frontend Label**
+- type: markdown
+  attributes:
+    value: |
+      **Frontend Label**
 {% elif inputs.issueType == "Backend" %}
-  - type: markdown
-    attributes:
-      value: |
-        **Backend Label**
+- type: markdown
+  attributes:
+    value: |
+      **Backend Label**
 {% endif %}
 
 - type: markdown
