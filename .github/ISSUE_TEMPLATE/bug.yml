@@ -2,7 +2,7 @@ name: "🐛 Bug"
 description: Report an issue to help improve the project.
 labels: ["🛠 goal: fix"]
 body:
-  - type: checkboxes
+  - type: dropdown
     id: issueType
     attributes:
       label: Issue Type
@@ -17,8 +17,8 @@ body:
     attributes:
       label: Description
       description: A brief description of the question or issue, also include what you tried and what didn't work
-      validations:
-        required: true
+    validations:
+      required: true
   - type: textarea
     id: screenshots
     attributes:
