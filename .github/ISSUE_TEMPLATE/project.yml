@@ -1,6 +1,13 @@
-name: "Bug report"
+title: 'chore: project addition by '
 labels: ['projects addition', '🚦status: awaiting triage', 'good first issue', '🟩 priority: low']
 body:
+  - type: textarea
+    id: about
+    attributes:
+      label: About
+      description: Briefly describe the new project you want to add to the list.
+    validations:
+      required: true
   - type: textarea
     id: project-add
     attributes:
