@@ -1,4 +1,4 @@
-title: 'chore: project addition by '
+name: "Bug report"
 labels: ['projects addition', '🚦status: awaiting triage', 'good first issue', '🟩 priority: low']
 body:
   - type: textarea
