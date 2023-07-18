@@ -1,6 +1,7 @@
 name: "🌱 Project Addition"
 description: "Add a new project to the list"
 title: 'chore: project addition by '
+labels: ['good first issue', 'gssoc23']
 body:
   - type: textarea
     id: about
@@ -28,15 +29,9 @@ body:
     attributes:
       label: 'Select the Project Type'
       options:
-        - label: 'Frontend'
-          value: 'frontend'
-        - label: 'Backend'
-          value: 'backend'
-        - label: 'App Development'
-          value: 'app-development'
-        - label: 'API'
-          value: 'api'
-        - label: 'ML'
-          value: 'ml'
-        - label: 'DSA'
-          value: 'dsa'
+        - Frontend
+        - Backend
+        - App Development
+        - API
+        - ML
+        - DSA
