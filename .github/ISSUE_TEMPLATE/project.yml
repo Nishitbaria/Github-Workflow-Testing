@@ -1,0 +1,34 @@
+title: 'chore: project addition by '
+labels: ['projects addition', '🚦status: awaiting triage', 'good first issue', '🟩 priority: low']
+body:
+  - type: textarea
+    id: project-add
+    attributes:
+      label: Add a new project to the list
+    validations:
+      required: true
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: 'Record'
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
+        - label: I want to work on this issue
+  - type: dropdown # Adding a dropdown
+    id: project-type
+    attributes:
+      label: 'Select the Project Type'
+      options:
+        - label: 'Frontend'
+          value: 'frontend'
+        - label: 'Backend'
+          value: 'backend'
+        - label: 'App Development'
+          value: 'app-development'
+        - label: 'API'
+          value: 'api'
+        - label: 'ML'
+          value: 'ml'
+        - label: 'DSA'
+          value: 'dsa'
