@@ -1,4 +1,4 @@
-name: Issue Assignment
+name: Assign Issue on Mention
 
 on:
   push:
@@ -6,47 +6,41 @@ on:
       - main
 
 jobs:
-  issue_assignment:
+  assign_issue:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Setup GitHub API authentication
-        uses: actions/setup-github@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract mentioned user from commit message
-        id: extract_user
+      - name: Parse commit message
+        id: parse_message
         run: |
-          USERNAME=$(echo ${{ github.event.commits[0].message }} | grep -o -P '(?<=Hey @)\w+(?=\s,)')
-          echo ::set-output name=USERNAME::$USERNAME
+          message=$(git log -1 --pretty=%B)
+          mentioned_user=$(echo "$message" | grep -oE '@[a-zA-Z0-9_-]+' | head -n 1)
+          echo "Mentioned User: $mentioned_user" > mentioned_user.txt
 
-      - name: Check if mentioned user is different from commit author
+      - name: Read mentioned user
+        id: read_user
         run: |
-          COMMIT_AUTHOR=$(git show -s --format='%an' ${{ github.event.commits[0].sha }})
-          if [ "$COMMIT_AUTHOR" = "$USERNAME" ]; then
-            echo "You cannot assign an issue to yourself"
-            exit 1
-          fi
+          echo "::set-output name=user::$(cat mentioned_user.txt)"
 
-      - name: Assign issue to mentioned user
-        run: |
-          gh issue assign --repo ${{ github.repository }} $USERNAME ${{ github.event.commits[0].issue.number }}
-          echo "Issue assigned to $USERNAME"
-
-      - name: Reply to commit with assignment message
+      - name: Find mentioned user and assign issue
+        if: steps.read_user.outputs.user != ''
         uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const message = `Hey @${context.payload.commits[0].author.username}, You can start working on this issue. Please follow the contribution guidelines mentioned in the repository: [CONTRIBUTING.md](${{ github.repository }}/blob/main/CONTRIBUTING.md)`
-            github.rest.issues.createComment({
-              issue_number: context.payload.commits[0].issue.number,
+            const user = "${{ steps.read_user.outputs.user }}".substring(1);
+            const { data: issues } = await github.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: message
-            })
+              state: 'open',
+              creator: context.actor
+            });
+            const issue = issues.find(issue => issue.title.includes("#")); // Assuming issue title contains '#' for reference
+            if (issue) {
+              await github.issues.addAssignees({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                assignees: [user]
+              });
+            }
