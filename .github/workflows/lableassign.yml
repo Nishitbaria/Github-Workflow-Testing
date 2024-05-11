@@ -1,4 +1,4 @@
-name: Assign Issue and Comment on Mention
+name: Issue Assignment
 
 on:
   push:
@@ -6,47 +6,47 @@ on:
       - main
 
 jobs:
-  assign_and_comment:
+  issue_assignment:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Parse commit message
-        id: parse_message
-        run: |
-          message=$(git log -1 --pretty=%B | grep -oE '@[a-zA-Z0-9_-]+' | head -n 1)
-          echo "Mentioned User: $message" > mentioned_user.txt
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-      - name: Read mentioned user
-        id: read_user
-        run: |
-          echo "::set-output name=user::$(cat mentioned_user.txt)"
+      - name: Setup GitHub API authentication
+        uses: actions/setup-github@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Find mentioned user and assign issue
-        if: steps.read_user.outputs.user != ''
+      - name: Extract mentioned user from commit message
+        id: extract_user
+        run: |
+          USERNAME=$(echo ${{ github.event.commits[0].message }} | grep -o -P '(?<=Hey @)\w+(?=\s,)')
+          echo ::set-output name=USERNAME::$USERNAME
+
+      - name: Check if mentioned user is different from commit author
+        run: |
+          COMMIT_AUTHOR=$(git show -s --format='%an' ${{ github.event.commits[0].sha }})
+          if [ "$COMMIT_AUTHOR" = "$USERNAME" ]; then
+            echo "You cannot assign an issue to yourself"
+            exit 1
+          fi
+
+      - name: Assign issue to mentioned user
+        run: |
+          gh issue assign --repo ${{ github.repository }} $USERNAME ${{ github.event.commits[0].issue.number }}
+          echo "Issue assigned to $USERNAME"
+
+      - name: Reply to commit with assignment message
         uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const user = "${{ steps.read_user.outputs.user }}".substring(1);
-            const { data: issues } = await github.issues.listForRepo({
+            const message = `Hey @${context.payload.commits[0].author.username}, You can start working on this issue. Please follow the contribution guidelines mentioned in the repository: [CONTRIBUTING.md](${{ github.repository }}/blob/main/CONTRIBUTING.md)`
+            github.rest.issues.createComment({
+              issue_number: context.payload.commits[0].issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              state: 'open',
-              creator: context.actor
-            });
-            const issue = issues.find(issue => issue.title.includes("#")); // Assuming issue title contains '#' for reference
-            if (issue) {
-              await github.issues.addAssignees({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                assignees: [user]
-              });
-
-              await github.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                body: `Hey @${user}, You can start working on this issue. Please follow the contribution guidelines mentioned in the repository link: [CONTRIBUTING.md](https://github.com/Nishitbaria/OpenGrame/blob/main/CONTRIBUTING.md)`
-              });
-            }
+              body: message
+            })
