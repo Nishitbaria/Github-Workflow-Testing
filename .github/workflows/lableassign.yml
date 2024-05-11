@@ -1,0 +1,52 @@
+name: Assign Issue and Comment on Mention
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  assign_and_comment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Parse commit message
+        id: parse_message
+        run: |
+          message=$(git log -1 --pretty=%B | grep -oE '@[a-zA-Z0-9_-]+' | head -n 1)
+          echo "Mentioned User: $message" > mentioned_user.txt
+
+      - name: Read mentioned user
+        id: read_user
+        run: |
+          echo "::set-output name=user::$(cat mentioned_user.txt)"
+
+      - name: Find mentioned user and assign issue
+        if: steps.read_user.outputs.user != ''
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const user = "${{ steps.read_user.outputs.user }}".substring(1);
+            const { data: issues } = await github.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              creator: context.actor
+            });
+            const issue = issues.find(issue => issue.title.includes("#")); // Assuming issue title contains '#' for reference
+            if (issue) {
+              await github.issues.addAssignees({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                assignees: [user]
+              });
+
+              await github.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `Hey @${user}, You can start working on this issue. Please follow the contribution guidelines mentioned in the repository link: [CONTRIBUTING.md](https://github.com/Nishitbaria/OpenGrame/blob/main/CONTRIBUTING.md)`
+              });
+            }
